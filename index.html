@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Organizador Pessoal</title>
+  <style>
+    body {
+      display: flex;
+      height: 100vh;
+      background-color: #1c1c1c;
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    .terms-container {
+      background-color: #2e2e2e;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      width: 80%;
+      max-width: 600px;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+    }
+    .terms-container h2 {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #e53935;
+    }
+    .terms-container p {
+      font-size: 1em;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+    .terms-container button {
+      margin: 10px;
+      padding: 15px 25px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #e53935;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .terms-container button:hover {
+      background-color: #c62828;
+      box-shadow: 0 0 15px #e53935;
+    }
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 250px;
+      background-color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    }
+    .navbar button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 15px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #e53935;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .navbar button:hover {
+      background-color: #c62828;
+      box-shadow: 0 0 15px #e53935;
+    }
+    .main-container {
+      margin-left: 270px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      overflow-y: auto;
+      width: calc(100% - 270px);
+      overflow-x: hidden;
+    }
+    .work-area {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .notes-container, .table-container {
+      flex-basis: calc(50% - 20px);
+      background-color: #2e2e2e;
+      padding: 20px;
+      border-radius: 8px;
+      height: fit-content;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    }
+    .reminder-list {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #3a3a3a;
+      border-radius: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .reminder {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #444;
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      font-style: italic;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    .reminder p {
+      margin: 0;
+      font-size: 1em;
+    }
+    .reminder button {
+      margin-left: 5px;
+      padding: 4px 8px;
+      font-size: 12px;
+      color: #fff;
+      background-color: #555;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .reminder button:hover {
+      background-color: #777;
+      box-shadow: 0 0 5px #e53935;
+    }
+    .notes-display {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background-color: #2e2e2e;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      max-width: 800px;
+    }
+    .note-item {
+      background-color: #444;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      font-size: 1.1em;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+    }
+    .note-item button {
+      padding: 5px 10px;
+      font-size: 1em;
+      color: #fff;
+      background-color: #e53935;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .note-item button:hover {
+      background-color: #c62828;
+      box-shadow: 0 0 15px #e53935;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 16px;
+      background-color: #3a3a3a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #2e2e2e;
+      color: white;
+    }
+    th, td {
+      border: 1px solid #e53935;
+      padding: 10px;
+      text-align: center;
+    }
+    td {
+      background-color: #444444;
+    }
+    .main-container h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      color: #e53935;
+    }
+    .main-container p {
+      font-size: 1.2em;
+      color: #ccc;
+    }
+    .finance-area {
+      width: 100%;
+      background-color: #2e2e2e;
+      padding: 20px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .finance-area h2 {
+      color: #e53935;
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    .finance-form {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 30px;
+      padding: 20px;
+      background-color: #3a3a3a;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    }
+    .finance-form label {
+      font-size: 1.2em;
+      margin-bottom: 5px;
+    }
+    .finance-form input[type="text"],
+    .finance-form input[type="number"],
+    .finance-form input[type="date"] {
+      padding: 10px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      background-color: #444;
+      color: white;
+      outline: none;
+    }
+    .finance-type {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .finance-type label {
+      display: flex;
+      align-items: center;
+      font-size: 1em;
+    }
+    .finance-type input {
+      margin-right: 5px;
+    }
+    .finance-form button {
+      align-self: flex-start;
+      padding: 10px 20px;
+      font-size: 1em;
+      color: #fff;
+      background-color: #e53935;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .finance-form button:hover {
+      background-color: #c62828;
+      box-shadow: 0 0 15px #e53935;
+    }
+    .finance-table {
+      width: 100%;
+      max-width: 800px;
+      margin-top: 20px;
+    }
+    .finance-table table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #2e2e2e;
+      color: white;
+    }
+    .finance-table th, .finance-table td {
+      border: 1px solid #e53935;
+      padding: 15px;
+      text-align: center;
+    }
+    .finance-table th {
+      background-color: #3a3a3a;
+    }
+    .finance-table td {
+      background-color: #444444;
+    }
+    .result-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+      color: #fff;
+      background-color: #e53935;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .result-button:hover {
+      background-color: #c62828;
+      box-shadow: 0 0 15px #e53935;
+    }
+    .export-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+      color: #fff;
+      background-color: #e53935;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .export-button:hover {
+      background-color: #c62828;
+      box-shadow: 0 0 15px #e53935;
+    }
+    .modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #2e2e2e;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+      z-index: 20;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+    }
+    .modal h3 {
+      color: #e53935;
+      margin-bottom: 20px;
+    }
+    .modal p {
+      font-size: 1.2em;
+      color: #ccc;
+      margin: 10px 0;
+    }
+    .modal button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+      color: #fff;
+      background-color: #e53935;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .modal button:hover {
+      background-color: #c62828;
+      box-shadow: 0 0 15px #e53935;
+    }
+    .settings-container {
+      width: 100%;
+      max-width: 600px;
+      background-color: #2e2e2e;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+      margin-top: 30px;
+    }
+    .settings-container h3 {
+      color: #e53935;
+      margin-bottom: 15px;
+    }
+    .settings-container label {
+      display: block;
+      margin: 15px 0;
+      font-size: 1.2em;
+    }
+    .settings-container input[type="checkbox"], .settings-container input[type="range"] {
+      margin-right: 10px;
+    }
+    .settings-container button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+      color: #fff;
+      background-color: #e53935;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .settings-container button:hover {
+      background-color: #c62828;
+      box-shadow: 0 0 15px #e53935;
+    }
+  </style>
+</head>
+<body>
+  <div id="appContainer" class="main-container">
+    <div class="terms-container">
+      <h2>Termos de Uso</h2>
+      <p>Ao usar este aplicativo, você concorda que não irá utilizá-lo de forma prejudicial, ilegal ou fora dos objetivos para os quais foi desenvolvido. Você concorda em respeitar a privacidade, não abusar do uso, e manter sigilo de suas informações. O objetivo do app é ajudar na organização de sua vida pessoal e profissional, e nós não assumimos responsabilidade por eventos fora do controle do software ou falhas em cronogramas devido a interferências externas.</p>
+      <button onclick="acceptTerms()">Aceitar</button>
+      <button onclick="declineTerms()">Recusar</button>
+    </div>
+  </div>
+  <script>
+    let remindersData = [];
+    let financeEntriesData = [];
+
+    const appContainer = document.getElementById('appContainer');
+
+    // Carrega dados salvos do localStorage ao iniciar o app
+    function loadAppState() {
+      const savedState = JSON.parse(localStorage.getItem('organizadorPessoalState'));
+      if (savedState) {
+        if (savedState.termsAccepted) {
+          remindersData = savedState.reminders || [];
+          financeEntriesData = savedState.financeEntries || [];
+          initializeApp();
+          navigateTo(savedState.currentPage);
+        } else {
+          document.querySelector('.terms-container').style.display = 'block';
+        }
+      } else {
+        document.querySelector('.terms-container').style.display = 'block';
+      }
+    }
+
+    function saveAppState(page) {
+      const appState = {
+        termsAccepted: true,
+        currentPage: page,
+        reminders: remindersData,
+        financeEntries: financeEntriesData
+      };
+      localStorage.setItem('organizadorPessoalState', JSON.stringify(appState));
+    }
+
+    function acceptTerms() {
+      document.querySelector('.terms-container').style.display = 'none';
+      initializeApp();
+      saveAppState('menu');
+    }
+
+    function declineTerms() {
+      alert("Obrigado por considerar nosso aplicativo. Até a próxima!");
+    }
+
+    function initializeApp() {
+      const navbar = document.createElement('div');
+      navbar.classList.add('navbar');
+      navbar.innerHTML = `
+        <button onclick="navigateTo('menu')">Início</button>
+        <button onclick="navigateTo('workArea')">Área de Trabalho</button>
+        <button onclick="navigateTo('financeArea')">Finanças</button>
+        <button onclick="navigateTo('settings')">Configurações</button>
+        <button onclick="exitApp()">Sair</button>
+      `;
+      document.body.appendChild(navbar);
+
+      createMenu();
+    }
+
+    function navigateTo(page) {
+      if (page === 'menu') {
+        createMenu();
+      } else if (page === 'workArea') {
+        openWorkArea();
+      } else if (page === 'financeArea') {
+        openFinanceArea();
+      } else if (page === 'settings') {
+        showSettings();
+      }
+      saveAppState(page);
+    }
+
+    function createMenu() {
+      appContainer.innerHTML = `
+        <h1>Bem-vindo ao seu Organizador Pessoal</h1>
+        <p>Escolha uma opção no menu para começar.</p>
+        <div class="notes-display" id="notesDisplay"></div>
+      `;
+      displayNotesInMenu();
+    }
+
+    function displayNotesInMenu() {
+      const notesDisplay = document.getElementById('notesDisplay');
+      if (remindersData.length > 0) {
+        notesDisplay.innerHTML = '';
+        remindersData.forEach(note => {
+          const noteItem = document.createElement('div');
+          noteItem.classList.add('note-item');
+          noteItem.innerHTML = `
+            <span>${note}</span>
+            <button onclick="deleteNoteFromMenu(this)">Excluir</button>
+          `;
+          notesDisplay.appendChild(noteItem);
+        });
+      } else {
+        notesDisplay.innerHTML = '<p>Sem anotações no momento.</p>';
+      }
+    }
+
+    function deleteNoteFromMenu(button) {
+      const noteItem = button.parentElement;
+      const noteText = noteItem.querySelector('span').textContent;
+      remindersData = remindersData.filter(item => item !== noteText);
+      noteItem.remove();
+      saveAppState('menu');
+    }
+
+    function openWorkArea() {
+      appContainer.innerHTML = `
+        <div class="work-area">
+          <div class="notes-container">
+            <h3>Anotações</h3>
+            <textarea id="noteInput" placeholder="Anotações..."></textarea>
+            <button onclick="addReminder()">Adicionar Lembrete</button>
+            <button onclick="createSchedule()">Criar Cronograma</button>
+            <div id="reminderList" class="reminder-list"></div>
+          </div>
+          <div class="table-container">
+            <h3>Tabelamento</h3>
+            <table contenteditable="true">
+              <thead>
+                <tr><th>Tarefa</th><th>Data</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Exemplo Tarefa</td><td>2024-11-01</td><td>Em progresso</td></tr>
+              </tbody>
+            </table>
+            <button onclick="generateTable()">Adicionar Nova Linha</button>
+          </div>
+        </div>
+      `;
+      restoreReminders(remindersData);
+    }
+
+    function openFinanceArea() {
+      appContainer.innerHTML = `
+        <div class="finance-area">
+          <h2>Área de Finanças</h2>
+          <div class="finance-form">
+            <label>Descrição:</label>
+            <input type="text" placeholder="Descrição" />
+            <label>Valor:</label>
+            <input type="number" placeholder="R$" />
+            <label>Data:</label>
+            <input type="date" />
+            <div class="finance-type">
+              <label><input type="radio" name="financeType" value="Ganho" checked /> Ganho</label>
+              <label><input type="radio" name="financeType" value="Despesa" /> Despesa</label>
+            </div>
+            <button onclick="addFinanceEntry()">Adicionar</button>
+          </div>
+          <div class="finance-table">
+            <h3>Histórico Financeiro</h3>
+            <table>
+              <thead>
+                <tr><th>Descrição</th><th>Valor</th><th>Data</th><th>Tipo</th><th>Ações</th></tr>
+              </thead>
+              <tbody id="financeTableBody">
+              </tbody>
+            </table>
+            <button class="result-button" onclick="showResults()">Resultados</button>
+            <button class="export-button" onclick="exportToExcel()">Exportar para Excel</button>
+          </div>
+        </div>
+      `;
+      restoreFinanceEntries(financeEntriesData);
+    }
+
+    function showResults() {
+      let totalGanho = 0;
+      let totalDespesa = 0;
+      financeEntriesData.forEach(entry => {
+        if (entry.type === "Ganho") {
+          totalGanho += entry.value;
+        } else {
+          totalDespesa += entry.value;
+        }
+      });
+      const valorFinal = totalGanho - totalDespesa;
+
+      const modal = document.createElement('div');
+      modal.classList.add('modal');
+      modal.innerHTML = `
+        <h3>Resumo Financeiro</h3>
+        <p>Total de Ganhos: R$ ${totalGanho.toFixed(2)}</p>
+        <p>Total de Despesas: R$ ${totalDespesa.toFixed(2)}</p>
+        <p>Valor Final: R$ ${valorFinal.toFixed(2)}</p>
+        <button onclick="closeModal(this)">Fechar</button>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function closeModal(button) {
+      const modal = button.parentElement;
+      modal.remove();
+    }
+
+    function addReminder() {
+      const noteInput = document.getElementById("noteInput").value;
+      if (noteInput.trim() === "") {
+        alert("Por favor, insira um lembrete válido.");
+        return;
+      }
+      remindersData.push(noteInput);
+      const reminderList = document.getElementById("reminderList");
+      const reminder = document.createElement("div");
+      reminder.classList.add("reminder");
+      reminder.innerHTML = `
+        <p>${noteInput}</p>
+        <div>
+          <button onclick="deleteReminder(this)">Excluir</button>
+        </div>
+      `;
+      reminderList.appendChild(reminder);
+      document.getElementById("noteInput").value = "";
+      saveAppState('workArea');
+    }
+
+    function deleteReminder(button) {
+      const reminder = button.parentElement.parentElement;
+      const text = reminder.querySelector('p').textContent;
+      remindersData = remindersData.filter(item => item !== text);
+      reminder.remove();
+      saveAppState('workArea');
+    }
+
+    function createSchedule() {
+      alert("Cronograma criado! (Funcionalidade simplificada para demonstração)");
+    }
+
+    function generateTable() {
+      const tbody = document.querySelector(".table-container tbody");
+      const newRow = document.createElement("tr");
+      newRow.innerHTML = `<td>Nova Tarefa</td><td>YYYY-MM-DD</td><td>Pendente</td>`;
+      tbody.appendChild(newRow);
+      saveAppState('workArea');
+    }
+
+    function addFinanceEntry() {
+      const description = document.querySelector(".finance-form input[type='text']").value;
+      const value = parseFloat(document.querySelector(".finance-form input[type='number']").value);
+      const date = document.querySelector(".finance-form input[type='date']").value;
+      const type = document.querySelector(".finance-form input[name='financeType']:checked").value;
+      if (!description || isNaN(value) || !date) {
+        alert("Por favor, preencha todos os campos corretamente.");
+        return;
+      }
+      const entry = {
+        description: description,
+        value: value,
+        date: date,
+        type: type
+      };
+      financeEntriesData.push(entry);
+      const tableBody = document.getElementById("financeTableBody");
+      const newRow = document.createElement("tr");
+      newRow.innerHTML = `<td contenteditable="true">${entry.description}</td><td contenteditable="true">R$ ${entry.value.toFixed(2)}</td><td contenteditable="true">${entry.date}</td><td contenteditable="true">${entry.type}</td><td><button onclick="deleteFinanceEntry(this)">Excluir</button></td>`;
+      tableBody.appendChild(newRow);
+      updateTotals();
+      saveAppState('financeArea');
+    }
+
+    function deleteFinanceEntry(button) {
+      const row = button.parentElement.parentElement;
+      const description = row.cells[0].textContent;
+      const value = parseFloat(row.cells[1].textContent.replace('R$ ', ''));
+      const date = row.cells[2].textContent;
+      const type = row.cells[3].textContent;
+      financeEntriesData = financeEntriesData.filter(entry => !(entry.description === description && entry.value.toFixed(2) === value.toFixed(2) && entry.date === date && entry.type === type));
+      row.remove();
+      updateTotals();
+      saveAppState('financeArea');
+    }
+
+    function updateTotals() {
+      let totalGanho = 0;
+      let totalDespesa = 0;
+      financeEntriesData.forEach(entry => {
+        if (entry.type === "Ganho") {
+          totalGanho += entry.value;
+        } else {
+          totalDespesa += entry.value;
+        }
+      });
+    }
+
+    function exportToExcel() {
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "Descrição,Valor,Data,Tipo\n";
+      financeEntriesData.forEach(entry => {
+        csvContent += `${entry.description},R$ ${entry.value.toFixed(2)},${entry.date},${entry.type}\n`;
+      });
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "financeiro.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function restoreReminders(reminders) {
+      const reminderList = document.getElementById("reminderList");
+      if (reminderList && reminders) {
+        reminderList.innerHTML = '';
+        reminders.forEach(text => {
+          const reminder = document.createElement("div");
+          reminder.classList.add("reminder");
+          reminder.innerHTML = `
+            <p>${text}</p>
+            <div>
+              <button onclick="deleteReminder(this)">Excluir</button>
+            </div>
+          `;
+          reminderList.appendChild(reminder);
+        });
+      }
+    }
+
+    function restoreFinanceEntries(entries) {
+      const tableBody = document.getElementById("financeTableBody");
+      if (tableBody && entries) {
+        tableBody.innerHTML = '';
+        entries.forEach(entry => {
+          const newRow = document.createElement("tr");
+          newRow.innerHTML = `<td contenteditable="true">${entry.description}</td><td contenteditable="true">R$ ${entry.value.toFixed(2)}</td><td contenteditable="true">${entry.date}</td><td contenteditable="true">${entry.type}</td><td><button onclick="deleteFinanceEntry(this)">Excluir</button></td>`;
+          tableBody.appendChild(newRow);
+        });
+        updateTotals();
+      }
+    }
+
+    function showSettings() {
+      appContainer.innerHTML = `
+        <div class="settings-container">
+          <h3>Configurações</h3>
+          <label>
+            <input type="checkbox" id="darkModeToggle" /> Modo Escuro
+          </label>
+          <label>
+            Ajuste de Brilho: <input type="range" id="brightnessControl" min="0.5" max="1.5" step="0.1" value="1" />
+          </label>
+          <label>
+            Limpar Dados de Lembretes
+            <button onclick="clearReminders()">Limpar</button>
+          </label>
+          <label>
+            Limpar Dados Financeiros
+            <button onclick="clearFinanceEntries()">Limpar</button>
+          </label>
+          <button onclick="saveSettings()">Salvar Configurações</button>
+        </div>
+      `;
+      const savedSettings = JSON.parse(localStorage.getItem('organizadorPessoalSettings'));
+      if (savedSettings) {
+        document.getElementById('darkModeToggle').checked = savedSettings.darkMode;
+        document.getElementById('brightnessControl').value = savedSettings.brightness;
+        applySettings(savedSettings);
+      }
+    }
+
+    function saveSettings() {
+      const darkMode = document.getElementById('darkModeToggle').checked;
+      const brightness = document.getElementById('brightnessControl').value;
+      const settings = {
+        darkMode: darkMode,
+        brightness: brightness
+      };
+      localStorage.setItem('organizadorPessoalSettings', JSON.stringify(settings));
+      applySettings(settings);
+      alert("Configurações salvas com sucesso!");
+    }
+
+    function applySettings(settings) {
+      if (settings.darkMode) {
+        document.body.style.backgroundColor = '#121212';
+        document.body.style.color = '#ffffff';
+      } else {
+        document.body.style.backgroundColor = '#1c1c1c';
+        document.body.style.color = '#ffffff';
+      }
+      document.body.style.filter = `brightness(${settings.brightness})`;
+    }
+
+    function clearReminders() {
+      remindersData = [];
+      const savedState = JSON.parse(localStorage.getItem('organizadorPessoalState'));
+      if (savedState) {
+        savedState.reminders = [];
+        localStorage.setItem('organizadorPessoalState', JSON.stringify(savedState));
+      }
+      if (document.getElementById('reminderList')) {
+        document.getElementById('reminderList').innerHTML = '';
+      }
+      if (document.getElementById('notesDisplay')) {
+        document.getElementById('notesDisplay').innerHTML = '<p>Sem anotações no momento.</p>';
+      }
+      saveAppState('settings');
+      alert("Todos os lembretes foram removidos!");
+    }
+
+    function clearFinanceEntries() {
+      financeEntriesData = [];
+      const savedState = JSON.parse(localStorage.getItem('organizadorPessoalState'));
+      if (savedState) {
+        savedState.financeEntries = [];
+        localStorage.setItem('organizadorPessoalState', JSON.stringify(savedState));
+      }
+      if (document.getElementById('financeTableBody')) {
+        document.getElementById('financeTableBody').innerHTML = '';
+      }
+      updateTotals();
+      saveAppState('settings');
+      alert("Todos os registros financeiros foram removidos!");
+    }
+
+    function exitApp() {
+      alert("Obrigado por usar nosso aplicativo! Até logo!");
+    }
+
+    // Load app state when the page loads
+    window.onload = loadAppState;
+  </script>
+</body>
+</html>
